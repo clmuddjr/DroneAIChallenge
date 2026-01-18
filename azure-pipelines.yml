@@ -1,0 +1,22 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+    persistCredentials: true
+
+  - script: |
+      set -e
+      git config user.email "azure-pipeline@local"
+      git config user.name "Azure Pipeline Mirror"
+
+      git remote remove github 2>/dev/null || true
+      git remote add github https://x-access-token:$(GH_PAT)@github.com/clmuddjr/DroneAIChallenge.git
+
+      git push github HEAD:main
+    displayName: "Mirror Azure Repos -> GitHub"
